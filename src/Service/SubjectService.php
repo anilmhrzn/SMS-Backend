@@ -25,5 +25,9 @@ class SubjectService
 
         return $subject;
     }
+    public function findAll(): array
+    {
+        return $this->subjectRepository->findAll();
+    }
 //    public function findById($id): array
 }
