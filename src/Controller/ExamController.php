@@ -5,13 +5,15 @@ namespace App\Controller;
 use App\Dto\AddExamRequest;
 use App\Entity\Exam;
 use App\Service\ExamService;
-use DateTime;
+//use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Validator\Constraints\Date;
+use Symfony\Component\Validator\Constraints\DateTime;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ExamController extends AbstractController
@@ -21,7 +23,7 @@ class ExamController extends AbstractController
 
     }
 
-    #[Route('/api/admin/exam/new', name: 'add_exam', methods: ['POST'])]
+    #[Route('/api/exams/new', name: 'add_exam', methods: ['POST'])]
     public function addExam(Request $request, ValidatorInterface $validator)
     {
         $data = json_decode($request->getContent(), true);
@@ -61,9 +63,12 @@ class ExamController extends AbstractController
     {
         $id = $request->query->get('id');
         $name = $request->query->get('name');
+        $date = $request->query->get('date');
+        $subject = (int)$request->query->get('subject');
+//        dd($name,$date, $subject);
         $id = $id !== null ? (int)$id : null;
 
-        $exams = $this->examService->searchExam($id, $name);
+        $exams = $this->examService->searchExam($id, $name, $date, $subject);
         return new JsonResponse($exams, Response::HTTP_OK, ['content-type' => 'application/json']);
     }
 }

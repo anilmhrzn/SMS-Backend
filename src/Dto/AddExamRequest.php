@@ -16,7 +16,7 @@ readonly class AddExamRequest
         private string $name,
 
         #[Assert\NotBlank(message: 'Subject should not be blank')]
-        private int    $subject
+        private int $subject
     )
     {
         $this->date = $date;

@@ -3,12 +3,10 @@
 namespace App\Repository;
 
 use App\Entity\Exam;
+use App\Entity\Subject;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-/**
- * @extends ServiceEntityRepository<Exam>
- */
 class ExamRepository extends ServiceEntityRepository implements ExamRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
@@ -52,7 +50,7 @@ class ExamRepository extends ServiceEntityRepository implements ExamRepositoryIn
         $em->flush();
     }
 
-    public function findByIdAndOrName(?int $id, ?string $name): array
+    public function findByIdAndOrNameOrDateOrSub(?int $id, ?string $name, ?String $date, ?Subject $subject): array
     {
         $qb = $this->createQueryBuilder('e');
 
@@ -61,9 +59,22 @@ class ExamRepository extends ServiceEntityRepository implements ExamRepositoryIn
                 ->setParameter('id', $id);
         }
 
-        if ($name !== null) {
+        if ($name !== null && $name !== ''){
             $qb->andWhere('e.name = :name')
                 ->setParameter('name', $name);
+        }
+//        dd('here', $date);
+        if ($date !== null && $date !== ''){
+//            dd('here', $date);
+//            $date= new \DateTime($date);
+            $date = new \DateTime($date);
+            $qb->andWhere('e.date = :date')
+                ->setParameter('date', $date);
+        }
+        if ($subject !== null) {
+            $qb->andWhere('e.subject = :subject')
+
+                ->setParameter('subject', $subject);
         }
         return $qb->getQuery()->getResult();
     }

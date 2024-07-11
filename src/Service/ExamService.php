@@ -7,6 +7,8 @@ use App\Entity\Exam;
 use App\Repository\ExamRepositoryInterface;
 use App\Repository\SubjectRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Validator\Constraints\Date;
+use Symfony\Component\Validator\Constraints\DateTime;
 
 class ExamService
 {
@@ -42,9 +44,20 @@ class ExamService
         return $examData;
     }
 
-    public function searchExam(?int $id, ?string $name): array
+    public function searchExam(?int $id, ?string $name, ?string $date, ?int $sub): array
     {
-        $exams = $this->examRepository->findByIdAndOrName($id, $name);
+        if ($sub !== null && $sub !== 0){
+            $subId = $this->subRepo->findById($sub);
+            if ($subId == null) {
+                throw new \Exception('Subject not found');
+            }
+
+        }else{
+            $subId = null;
+        }
+
+
+        $exams = $this->examRepository->findByIdAndOrNameOrDateOrSub($id, $name, $date, $subId);
         $data = [];
         foreach ($exams as $exam) {
             $data[] = [
