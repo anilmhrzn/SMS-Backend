@@ -48,7 +48,7 @@ class MarksRepository extends ServiceEntityRepository implements MarksRepository
 
     public function addMark(Marks $mark): void
     {
-        $em= $this->getEntityManager();
+        $em = $this->getEntityManager();
         $em->persist($mark);
         $em->flush();
         // TODO: Implement addMark() method.
@@ -57,17 +57,28 @@ class MarksRepository extends ServiceEntityRepository implements MarksRepository
     public function viewMarks(array $data): array
     {
 //        $em= $this->getEntityManager();
-        $qb= $this->createQueryBuilder('m')
-            ->select('m','e')
-            ->leftJoin('m.exam','e')
+        $qb = $this->createQueryBuilder('m')
+            ->select('m', 'e')
+            ->leftJoin('m.exam', 'e')
             ->where('m.student = :student_id')
-            ->setParameter('student_id',$data['student_id'])
+            ->setParameter('student_id', $data['student_id'])
             ->andwhere('e.subject = :subject_id')
-            ->setParameter('subject_id',$data['subject_id'])
-
+            ->setParameter('subject_id', $data['subject_id'])
             ->getQuery()
             ->getResult();
         return $qb;
         // TODO: Implement viewMarks() method.
     }
+
+   public function findMarksByExamId(int $examId)
+{
+    $qb = $this->createQueryBuilder('m')
+        ->select('m.mark_obtained', 's.id AS student_Id', 's.name AS student_name')
+        ->join('m.student', 's')
+        ->where('m.exam = :examId')
+        ->setParameter('examId', $examId)
+        ->getQuery();
+
+    return $qb->getResult();
+}
 }

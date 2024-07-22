@@ -60,8 +60,8 @@ class ExamRepository extends ServiceEntityRepository implements ExamRepositoryIn
         }
 
         if ($name !== null && $name !== ''){
-            $qb->andWhere('e.name = :name')
-                ->setParameter('name', $name);
+            $qb->andWhere('LOWER(e.name) LIKE LOWER(:name)')
+                ->setParameter('name', '%'.$name.'%');
         }
 //        dd('here', $date);
         if ($date !== null && $date !== ''){

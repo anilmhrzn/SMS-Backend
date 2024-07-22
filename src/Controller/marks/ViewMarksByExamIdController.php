@@ -18,21 +18,21 @@ class ViewMarksByExamIdController extends AbstractController
     }
 
     #[Route('api/exams/view/marks', name: 'app_view_marks_by_exam_id', methods: ['POST'])]
-public function index(Request $request, MarksRepository $marksRepository): JsonResponse
-{
-    $data = json_decode($request->getContent(), true);
-    $examId = $data['exam_id'] ?? null;
+    public function index(Request $request, MarksRepository $marksRepository): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+        $examId = $data['exam_id'] ?? null;
 
-    if (!is_numeric($examId)) {
-        return new JsonResponse(['error' => 'Invalid exam ID'], Response::HTTP_BAD_REQUEST);
+        if (!is_numeric($examId)) {
+            return new JsonResponse(['error' => 'Invalid exam ID'], Response::HTTP_BAD_REQUEST);
+        }
+
+        $marks = $marksRepository->findMarksByExamId((int)$examId);
+//        dd($marks);
+        $json = $this->serializer->serialize($marks, 'json', [
+            AbstractNormalizer::ATTRIBUTES => [ 'student' => ['id' => 'student_Id', 'name' => 'student_name'],'mark_obtained'],
+        ]);
+
+        return new JsonResponse($json, Response::HTTP_OK, ['content-type' => 'application/json'], true);
     }
-
-    $marks = $marksRepository->findMarksByExamId((int) $examId);
-
-    // Since the data is already in a suitable format, directly encode it to JSON
-    // This bypasses the need for the serializer's AbstractNormalizer::ATTRIBUTES
-    $jsonMarks = json_encode($marks);
-
-    return new JsonResponse($jsonMarks, Response::HTTP_OK, ['content-type' => 'application/json'], true);
-}
 }
