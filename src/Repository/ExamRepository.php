@@ -108,4 +108,17 @@ class ExamRepository extends ServiceEntityRepository implements ExamRepositoryIn
             ->getQuery()
             ->getSingleScalarResult();
     }
+    public function findStudentIsAllowedToGiveExam($studentId, $examId)
+    {
+        $qb = $this->createQueryBuilder('e')
+            ->innerJoin('e.subject', 's')
+            ->innerJoin('s.students', 'st')
+            ->where('e.id = :examId')
+            ->andWhere('st.id = :studentId')
+            ->setParameter('examId', $examId)
+            ->setParameter('studentId', $studentId)
+            ->getQuery();
+
+        return $qb->getOneOrNullResult();
+}
 }

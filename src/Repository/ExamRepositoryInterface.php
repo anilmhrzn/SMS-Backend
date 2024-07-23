@@ -10,6 +10,8 @@ interface ExamRepositoryInterface
     public function findAll(): array;
     public function addNewExam(Exam $exam): void;
     public function findByIdAndOrNameOrDateOrSub(?int $id, ?string $name,?string $date,?Subject $subject): array;
+    public function findStudentIsAllowedToGiveExam($studentId, $examId);
+
 //    public function updateExam(Exam $exam): void;
 //    public function deleteExam(Exam $exam): void;
 
