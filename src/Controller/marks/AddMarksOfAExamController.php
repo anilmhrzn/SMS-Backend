@@ -67,7 +67,6 @@ class AddMarksOfAExamController extends AbstractController
 
             $exam = $entityManager->getRepository(Exam::class)->find($data['exam_id']);
             $studentInExam = $examRepository->findStudentIsAllowedToGiveExam($studentId, $data['exam_id']);
-//            dd('here');
 
 
             if (!$student) {
