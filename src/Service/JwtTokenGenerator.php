@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\User;
+use App\Service\Interfaces\TokenGeneratorInterface;
 use Jose\Component\Checker\AlgorithmChecker;
 use Jose\Component\Checker\HeaderCheckerManager;
 use Jose\Component\Core\AlgorithmManager;
@@ -15,16 +16,14 @@ use Jose\Component\Signature\Serializer\CompactSerializer;
 use Jose\Component\Signature\Serializer\JWSSerializerManager;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 
-class JwtTokenGenerator
+class JwtTokenGenerator implements TokenGeneratorInterface
 {
     public function loadUserData(User $user): array
     {
-        $userData = [
+        return [
             'email' => $user->getEmail(),
             'id' => $user->getId(),
         ];
-
-        return $userData;
     }
 
     public function generateToken(User $user): string
@@ -58,7 +57,7 @@ class JwtTokenGenerator
         return $serializer->serialize($jws, 0);
     }
 
-    public function validateToken($request)
+    public function validateToken($request): array
     {
         $authorizationHeader = $request->headers->get('Authorization');
         if (null === $authorizationHeader) {
