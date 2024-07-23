@@ -5,17 +5,19 @@ namespace App\Controller\marks;
 use App\Entity\Exam;
 use App\Entity\Marks;
 use App\Entity\Student;
+use App\Repository\ExamRepositoryInterface;
 use League\Csv\Reader;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Doctrine\ORM\EntityManagerInterface;
+use League\Csv\Exception as CsvException;
 
 class AddMarksOfAExamController extends AbstractController
 {
     #[Route('/api/add/marks/of-exam', name: 'app_add_marks_of_a_exam', methods: ['POST'])]
-    public function index(Request $request, EntityManagerInterface $entityManager): Response
+    public function index(Request $request,EntityManagerInterface $entityManager, ExamRepositoryInterface $examRepository): Response
     {
         $file = $request->files->get('csv_file');
         $data = $request->request->all();
@@ -28,36 +30,43 @@ class AddMarksOfAExamController extends AbstractController
         if (!in_array($file->getMimeType(), $validMimeTypes)) {
             return $this->json(['error' => 'Invalid file type. Only CSV files are allowed.'], Response::HTTP_BAD_REQUEST);
         }
+        try {
 
-        // After setting the header offset for the CSV
-        $csv = Reader::createFromPath($file->getRealPath(), 'r');
-        $csv->setHeaderOffset(0);
-        $headers = $csv->getHeader(); // Get the headers
+            // After setting the header offset for the CSV
+            $csv = Reader::createFromPath($file->getRealPath(), 'r');
+            $csv->setHeaderOffset(0);
+            $headers = $csv->getHeader(); // Get the headers
 
-        $requiredHeaders = ['StudentID', 'Marks'];
+            $requiredHeaders = ['StudentID', 'Marks'];
 
-        $extraHeaders = array_diff($headers, $requiredHeaders);
-        $missingHeaders = array_diff($requiredHeaders, $headers);
-        if (!empty($extraHeaders) || !empty($missingHeaders)) {
-            $errorMessages = [];
-            if (!empty($missingHeaders)) {
-                $errorMessages[] = 'Missing headers: ' . implode(', ', $missingHeaders);
+            $extraHeaders = array_diff($headers, $requiredHeaders);
+            $missingHeaders = array_diff($requiredHeaders, $headers);
+            if (!empty($extraHeaders) || !empty($missingHeaders)) {
+                $errorMessages = [];
+                if (!empty($missingHeaders)) {
+                    $errorMessages[] = 'Missing headers: ' . implode(', ', $missingHeaders);
+                }
+                if (!empty($extraHeaders)) {
+                    $errorMessages[] = 'Extra headers: ' . implode(', ', $extraHeaders);
+                }
+                return $this->json([
+                    'error' => 'Incorrect CSV format. ' . implode(' ', $errorMessages)
+                ], Response::HTTP_BAD_REQUEST);
+
             }
-            if (!empty($extraHeaders)) {
-                $errorMessages[] = 'Extra headers: ' . implode(', ', $extraHeaders);
-            }
-            return $this->json([
-                'error' => 'Incorrect CSV format. ' . implode(' ', $errorMessages)
-            ], Response::HTTP_BAD_REQUEST);
+            $records = $csv->getRecords();
+
+        } catch (CsvException $e) {
+            return $this->json(['error' => 'CSV processing failed: ' . $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
 
-        $records = $csv->getRecords();
         foreach ($records as $index => $record) {
             $studentId = $record['StudentID'];
             $marks = $record['Marks'];
             $student = $entityManager->getRepository(Student::class)->find($studentId);
+
             $exam = $entityManager->getRepository(Exam::class)->find($data['exam_id']);
-            $studentInExam = $entityManager->getRepository(Exam::class)->findStudentIsAllowedToGiveExam($studentId,$data['exam_id']);
+            $studentInExam = $examRepository->findStudentIsAllowedToGiveExam($studentId, $data['exam_id']);
 
 
             if (!$student) {

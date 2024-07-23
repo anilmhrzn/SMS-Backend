@@ -13,6 +13,7 @@
         "doctrine/orm": "^3.2",
         "friendsofsymfony/rest-bundle": "^3.7",
         "jms/serializer-bundle": "^5.4",
+        "league/csv": "^9.16",
         "nelmio/cors-bundle": "^2.5",
         "symfony/console": "7.1.*",
         "symfony/dotenv": "7.1.*",
@@ -30,6 +31,7 @@
         "web-token/jwt-framework": "^3.4"
     },
     "require-dev": {
+        "doctrine/doctrine-fixtures-bundle": "^3.6",
         "symfony/maker-bundle": "^1.60"
     },
     "config": {
