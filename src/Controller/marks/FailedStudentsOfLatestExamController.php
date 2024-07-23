@@ -33,6 +33,8 @@ class FailedStudentsOfLatestExamController extends AbstractController
     public function countFailedStudentsOfLatestExam(): Response
     {
         $latestExam = $this->examRepository->findLatestTakenExam();
+//        dd($latestExam);
+        //TODO: complete this
         if ($latestExam) {
             $latestExamId = $latestExam->getId();
             $subject = $latestExam->getSubject()->getName();

@@ -20,7 +20,7 @@ class LatestTakenExamController extends AbstractController
     public function index(): Response
     {
         $latestExam = $this->examRepository->findLatestTakenExam();
-
+dd($latestExam);
         if ($latestExam) {
             $latestExamInfo = [
                 'id' => $latestExam->getId(),

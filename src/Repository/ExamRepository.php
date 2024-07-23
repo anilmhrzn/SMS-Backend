@@ -78,4 +78,34 @@ class ExamRepository extends ServiceEntityRepository implements ExamRepositoryIn
         }
         return $qb->getQuery()->getResult();
     }
+
+    public function findLatestTakenExam(): ?Exam
+{
+    return $this->createQueryBuilder('e')
+        ->orderBy('e.date', 'DESC') // Order by date in descending order
+        ->setMaxResults(1) // Limit to only the most recent exam
+        ->getQuery()
+        ->getOneOrNullResult(); // Execute the query and return the result or null
+}
+
+    public function findComingExams(\DateTime $today, \DateTime|false $futureDate)
+    {
+        return $this->createQueryBuilder('e')
+            ->where('e.date BETWEEN :today AND :futureDate')
+            ->setParameter('today', $today)
+            ->setParameter('futureDate', $futureDate)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function countComingExams(\DateTime $today, \DateTime|false $futureDate)
+    {
+        return $this->createQueryBuilder('e')
+            ->select('COUNT(e.id)')
+            ->where('e.date BETWEEN :today AND :futureDate')
+            ->setParameter('today', $today)
+            ->setParameter('futureDate', $futureDate)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }

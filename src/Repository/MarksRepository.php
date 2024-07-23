@@ -81,4 +81,15 @@ class MarksRepository extends ServiceEntityRepository implements MarksRepository
 
     return $qb->getResult();
 }
+function countFailedStudentsByExamId(int $examId): int
+{
+    $qb = $this->createQueryBuilder('m')
+        ->select('COUNT(m.id)')
+        ->where('m.exam = :examId')
+        ->andWhere('m.mark_obtained < 40')
+        ->setParameter('examId', $examId)
+        ->getQuery();
+
+    return $qb->getSingleScalarResult();
+}
 }
