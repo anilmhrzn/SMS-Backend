@@ -3,12 +3,13 @@
 namespace App\Repository;
 
 use App\Entity\Student;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 interface StudentRepositoryInterface
 {
 
     public function findAll(): array;
-    public function findAllByLimitAndPage( $limit = null, $offset = null): array;
+    public function findAllByLimitAndPage($limit, $page): Paginator;
 
     public function findById(int $id): ?Student;
 

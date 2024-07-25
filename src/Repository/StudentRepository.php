@@ -7,6 +7,7 @@ use App\Entity\Subject;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 /**
  * @extends ServiceEntityRepository<Student>
@@ -83,13 +84,19 @@ class StudentRepository extends ServiceEntityRepository implements StudentReposi
         $this->getEntityManager()->flush();
     }
 
-    public function findAllByLimitAndPage($limit = null, $offset = null): array
+    public function findAllByLimitAndPage($limit , $page): Paginator
     {
-        return $this->createQueryBuilder('s')
-            ->setMaxResults($limit)
-            ->setFirstResult($offset)
-            ->getQuery()
-            ->getResult();
+//        dd($limit,$page);
+        $queryBuilder = $this->createQueryBuilder('s')
+            ->orderBy('s.id', 'ASC')
+            ->getQuery();
+
+        $paginator = new Paginator($queryBuilder);
+        $paginator->getQuery()
+            ->setFirstResult($limit * ($page - 1)) // Offset
+            ->setMaxResults($limit);
+//        dd($paginator);
+        return $paginator;
     }
     public function countStudentsOfUser(int $userId): int
     {

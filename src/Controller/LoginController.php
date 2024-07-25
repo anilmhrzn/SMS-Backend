@@ -17,7 +17,8 @@ class LoginController extends AbstractController
     #[Route('/api/login', name: 'app_login', methods: ['POST'])]
     public function login(Request $request, LoginValidationService $loginValidationService, JwtTokenGenerator $jwtTokenGenerator): JsonResponse
     {
-        $loginDTO = new LoginRequestDTO(json_decode($request->getContent(), true));
+
+        $loginDTO = new LoginRequestDTO(json_decode($request->getContent(), true)? : []);
         $validationResult = $loginValidationService->validateLoginDTO($loginDTO);
         if (isset($validationResult['errors'])) {
             return new JsonResponse(['error' => $validationResult['errors']], Response::HTTP_BAD_REQUEST, ['content-type' => 'application/json']);

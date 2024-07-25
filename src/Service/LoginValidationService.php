@@ -26,7 +26,7 @@ readonly class LoginValidationService
             return ['errors' => $errorMessages];
         }
 
-        $user = $this->userValidator->validateUser($loginDTO->email, $loginDTO->password);
+        $user = $this->userValidator->validateUser($loginDTO->getEmail(), $loginDTO->getPassword());
         if (!$user) {
             $errorMessages[] = 'Invalid email or password';
             return ['errors' => $errorMessages];

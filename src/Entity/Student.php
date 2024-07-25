@@ -212,6 +212,14 @@ class Student
 
         return $this;
     }
-
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'name' => $this->getName(),
+            'email' => $this->getEmail(),
+            'number' => $this->getNumber(),
+        ];
+    }
 
 }

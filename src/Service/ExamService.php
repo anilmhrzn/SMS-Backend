@@ -44,29 +44,29 @@ class ExamService
         return $examData;
     }
 
-    public function searchExam(?int $id, ?string $name, ?string $date, ?int $sub): array
-    {
-        if ($sub !== null && $sub !== 0){
-            $subId = $this->subRepo->findById($sub);
-            if ($subId == null) {
-                throw new \Exception('Subject not found');
-            }
-
-        }else{
-            $subId = null;
-        }
-
-
-        $exams = $this->examRepository->findByIdAndOrNameOrDateOrSub($id, $name, $date, $subId);
-        $data = [];
-        foreach ($exams as $exam) {
-            $data[] = [
-                'id' => $exam->getId(),
-                'name' => $exam->getName(),
-                'date' => $exam->getDate()->format('Y-m-d'),
-                'subject' => $exam->getSubject()->getName()
-            ];
-        }
-        return $data;
-    }
+//    public function searchExam(?int $id, ?string $name, ?string $date, ?int $sub): array
+//    {
+//        if ($sub !== null && $sub !== 0){
+//            $subId = $this->subRepo->findById($sub);
+//            if ($subId == null) {
+//                throw new \Exception('Subject not found');
+//            }
+//
+//        }else{
+//            $subId = null;
+//        }
+//
+//
+//        $exams = $this->examRepository->findByIdAndOrNameOrDateOrSub($id, $name, $date, $subId);
+//        $data = [];
+//        foreach ($exams as $exam) {
+//            $data[] = [
+//                'id' => $exam->getId(),
+//                'name' => $exam->getName(),
+//                'date' => $exam->getDate()->format('Y-m-d'),
+//                'subject' => $exam->getSubject()->getName()
+//            ];
+//        }
+//        return $data;
+//    }
 }

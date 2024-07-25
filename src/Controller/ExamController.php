@@ -13,8 +13,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Validator\Constraints\Date;
-use Symfony\Component\Validator\Constraints\DateTime;
+//use Symfony\Component\Validator\Constraints\DateTime;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use DateTime;
+
 
 class ExamController extends AbstractController
 {
@@ -42,33 +44,18 @@ class ExamController extends AbstractController
 
     }
 
-    #[Route('/api/exams', name: 'get_exams', methods: ['GET'])]
-    public function getExams(Request $request, EntityManagerInterface $entityManager)
-    {
-        $exams = $entityManager->getRepository(Exam::class)->findAll();
-        $data = [];
-        foreach ($exams as $exam) {
-            $data[] = [
-                'id' => $exam->getId(),
-                'date' => $exam->getDate()->format('Y-m-d'),
-                'subject' => $exam->getSubject()->getName(),
-                'name' => $exam->getName()
-            ];
-        }
-        return new JsonResponse($data, Response::HTTP_OK, ['content-type' => 'application/json']);
-    }
 
-    #[Route('/api/search_exam', name: 'search_exam', methods: ['GET'])]
-    public function searchExam(Request $request): JsonResponse
-    {
-        $id = $request->query->get('id');
-        $name = $request->query->get('name');
-        $date = $request->query->get('date');
-        $subject = (int)$request->query->get('subject');
-//        dd($name,$date, $subject);
-        $id = $id !== null ? (int)$id : null;
-
-        $exams = $this->examService->searchExam($id, $name, $date, $subject);
-        return new JsonResponse($exams, Response::HTTP_OK, ['content-type' => 'application/json']);
-    }
+//    #[Route('/api/search_exam', name: 'search_exam', methods: ['GET'])]
+//    public function searchExam(Request $request): JsonResponse
+//    {
+//        $id = $request->query->get('id');
+//        $name = $request->query->get('name');
+//        $date = $request->query->get('date');
+//        $subject = (int)$request->query->get('subject');
+////        dd($name,$date, $subject);
+//        $id = $id !== null ? (int)$id : null;
+//
+//        $exams = $this->examService->searchExam($id, $name, $date, $subject);
+//        return new JsonResponse($exams, Response::HTTP_OK, ['content-type' => 'application/json']);
+//    }
 }
