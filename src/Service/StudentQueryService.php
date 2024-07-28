@@ -63,7 +63,7 @@ class StudentQueryService implements StudentQueryInterface
     public function findByStudentId($studentId): array
     {
         $student = $this->studentRepository->findById($studentId);
-        $studentsArray = [
+        return [
             'id' => $student->getId(),
             'name' => $student->getName(),
             'email' => $student->getEmail(),
@@ -71,7 +71,6 @@ class StudentQueryService implements StudentQueryInterface
             'photo' => $student->getPhoto(),
             'gender' => $student->getGender(),
             ];
-        return $studentsArray;
 
     }
 
