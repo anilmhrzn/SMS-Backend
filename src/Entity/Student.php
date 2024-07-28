@@ -51,6 +51,9 @@ class Student
     #[ORM\OneToMany(targetEntity: Attendance::class, mappedBy: 'student')]
     private Collection $attendances;
 
+    #[ORM\ManyToOne(inversedBy: 'student')]
+    private ?Semester $semester = null;
+
     public function __construct()
     {
         $this->subjects = new ArrayCollection();
@@ -220,6 +223,18 @@ class Student
             'email' => $this->getEmail(),
             'number' => $this->getNumber(),
         ];
+    }
+
+    public function getSemester(): ?Semester
+    {
+        return $this->semester;
+    }
+
+    public function setSemester(?Semester $semester): static
+    {
+        $this->semester = $semester;
+
+        return $this;
     }
 
 }

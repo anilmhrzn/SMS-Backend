@@ -30,6 +30,9 @@ class Subject
     #[ORM\ManyToMany(targetEntity: Student::class, mappedBy: 'subjects')]
     private Collection $students;
 
+    #[ORM\ManyToOne(inversedBy: 'subject')]
+    private ?Semester $semester = null;
+
 
     public function __construct()
     {
@@ -115,6 +118,18 @@ class Subject
     {
         $this->setName($dto->getName());
 
+    }
+
+    public function getSemester(): ?Semester
+    {
+        return $this->semester;
+    }
+
+    public function setSemester(?Semester $semester): static
+    {
+        $this->semester = $semester;
+
+        return $this;
     }
 
 

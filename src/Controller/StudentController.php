@@ -6,7 +6,7 @@ use App\Dto\AddNewStudentRequest;
 use App\Entity\Student;
 use App\Repository\StudentRepository;
 use App\Service\Interfaces\StudentManagementInterface;
-use App\Service\Interfaces\StudentQueryInterface;
+use App\Service\Interfaces\UserQueryInterface;
 use App\Service\PhotoProcessor;
 use App\Service\StudentQueryService;
 use App\Service\Trie_based_search\StudentTrieService;
@@ -21,7 +21,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 #[Route('api')]
 class StudentController extends AbstractController
 {
-    public function __construct(private readonly StudentQueryInterface $studentQueryInterface, private readonly StudentManagementInterface $studentManagementInterface , private PhotoProcessor $photoProcessor)
+    public function __construct(private readonly UserQueryInterface $studentQueryInterface, private readonly StudentManagementInterface $studentManagementInterface , private PhotoProcessor $photoProcessor)
     {
     }
 

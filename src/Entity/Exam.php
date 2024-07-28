@@ -32,6 +32,9 @@ class Exam
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
+    #[ORM\ManyToOne(inversedBy: 'exam')]
+    private ?Semester $semester = null;
+
     public function __construct()
     {
         $this->marks = new ArrayCollection();
@@ -110,6 +113,18 @@ class Exam
     public function setName(string $name): static
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getSemester(): ?Semester
+    {
+        return $this->semester;
+    }
+
+    public function setSemester(?Semester $semester): static
+    {
+        $this->semester = $semester;
 
         return $this;
     }

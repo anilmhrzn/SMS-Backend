@@ -48,6 +48,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'json')]
     private $roles = [];
 
+    #[ORM\ManyToOne(inversedBy: 'user')]
+    private ?Semester $semester = null;
+
     public function __construct()
     {
         $this->student = new ArrayCollection();
@@ -100,7 +103,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $roles = $this->roles;
         // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
+//        $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
     }
@@ -190,6 +193,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $attendance->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getSemester(): ?Semester
+    {
+        return $this->semester;
+    }
+
+    public function setSemester(?Semester $semester): static
+    {
+        $this->semester = $semester;
 
         return $this;
     }

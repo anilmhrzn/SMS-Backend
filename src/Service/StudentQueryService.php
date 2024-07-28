@@ -7,13 +7,14 @@ use App\Entity\Student;
 use App\Repository\StudentRepositoryInterface;
 use App\Service\Interfaces\StudentManagementInterface;
 use App\Service\Interfaces\StudentQueryInterface;
+use App\Service\Interfaces\UserQueryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class StudentQueryService implements StudentQueryInterface
 {
 
-    public function __construct(private StudentRepositoryInterface $studentRepository, private EntityManagerInterface $entityManager)
+    public function __construct(private StudentRepositoryInterface $studentRepository)
     {
     }
 
@@ -74,4 +75,8 @@ class StudentQueryService implements StudentQueryInterface
 
     }
 
+    public function findSubjectById(int $id)
+    {
+        // TODO: Implement findSubjectById() method.
+    }
 }

@@ -20,9 +20,11 @@ class JwtTokenGenerator implements TokenGeneratorInterface
 {
     public function loadUserData(User $user): array
     {
+//        dd($user->getRoles());
         return [
             'email' => $user->getEmail(),
             'id' => $user->getId(),
+            'roles' => $user->getRoles(),
         ];
     }
 
@@ -42,10 +44,12 @@ class JwtTokenGenerator implements TokenGeneratorInterface
             'iat' => time(),
             'nbf' => time(),
             'exp' => time() + 3600,
+//            $userData
             'email' => $userData['email'],
             'id' => $userData['id'],
+            'roles' => $userData['roles'],
         ]);
-
+//dd( $payload);
         $jws = $jwsBuilder
             ->create()
             ->withPayload($payload)
@@ -102,6 +106,8 @@ class JwtTokenGenerator implements TokenGeneratorInterface
             throw new CustomUserMessageAuthenticationException('Invalid token signature');
         }
         $payload = json_decode($jws->getPayload(), true);
+
+//        dd($payload,$payload[0]['email']);
         if ($payload['exp'] < time()) {
             throw new CustomUserMessageAuthenticationException('Token has expired');
         }
@@ -109,6 +115,7 @@ class JwtTokenGenerator implements TokenGeneratorInterface
         if (!isset($payload['email'])) {
             throw new CustomUserMessageAuthenticationException('Token is missing the payload email');
         }
+//        dd('here');
         if (!isset($payload['id'])) {
             throw new CustomUserMessageAuthenticationException('Token is missing the payload id');
         }

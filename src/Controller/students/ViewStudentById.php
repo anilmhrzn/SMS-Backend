@@ -3,6 +3,7 @@
 namespace App\Controller\students;
 
 use App\Service\Interfaces\StudentQueryInterface;
+use App\Service\Interfaces\UserQueryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;

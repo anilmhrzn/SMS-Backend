@@ -3,6 +3,7 @@
 namespace App\Controller\students;
 
 use App\Service\Interfaces\StudentQueryInterface;
+use App\Service\Interfaces\UserQueryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,6 +18,7 @@ class ViewAllStudentsController extends AbstractController
     #[Route('api/students', name: 'app_student_index_all', methods: ['GET'])]
     public function index(Request $request): Response
     {
+//        dd('hello');
         $page = (int)$request->query->get('page', 1);
         $limit = (int)$request->query->get('limit', 10);
         $students = $this->studentQueryService->findAllByLimitAndPage($limit, $page);

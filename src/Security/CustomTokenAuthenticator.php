@@ -36,58 +36,8 @@ class CustomTokenAuthenticator extends AbstractAuthenticator
     public function authenticate(Request $request): Passport
     {
 
-//        $algorithmManager = new AlgorithmManager([
-//            new HS256(),
-//        ]);
-//        $jwsVerifier = new JWSVerifier($algorithmManager);
-//        $jwk = new JWK([
-//            'kty' => 'oct',
-//            'k' => $_ENV['JWT_SECRET_KEY'],
-//        ]);
-//
-//        $serializerManager = new JWSSerializerManager([
-//            new CompactSerializer(),
-//        ]);
-//
-//        try {
-//            $jws = $serializerManager->unserialize($apiToken);
-//        } catch (\InvalidArgumentException $e) {
-//            throw new CustomUserMessageAuthenticationException('Invalid token');
-//        }
-//        $headerCheckerManager = new HeaderCheckerManager(
-//            [
-//                new AlgorithmChecker(['HS256']),
-//                // We want to verify that the header "alg" (algorithm)
-//                // is present and contains "HS256"
-//            ],
-//            [
-//                new JWSTokenSupport(), // Adds JWS token type support
-//            ]
-//        );
-//        try {
-//            $headerCheckerManager->check($jws, 0);
-//        } catch (\Exception $e) {
-//            echo 'Error: ' . $e->getMessage();
-//        }
-//
-//        if (!$jwsVerifier->verifyWithKey($jws, $jwk, 0)) {
-//            throw new CustomUserMessageAuthenticationException('Invalid token signature');
-//        }
-//        $payload = json_decode($jws->getPayload(), true);
-//        if ($payload['exp'] < time()) {
-//            throw new CustomUserMessageAuthenticationException('Token has expired');
-//        }
-//
-//        if (!isset($payload['email'])) {
-//            throw new CustomUserMessageAuthenticationException('Token is missing the payload email');
-//        }
-//        if (!isset($payload['id'])) {
-//            throw new CustomUserMessageAuthenticationException('Token is missing the payload id');
-//        }
-
         $payload = $this->jwtTokenGenerator->validateToken($request);
         $userIdentifier = $payload['email'];
-
         return new SelfValidatingPassport(new UserBadge($userIdentifier));
     }
 
