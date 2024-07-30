@@ -2,33 +2,32 @@
 
 namespace App\Service;
 
-use App\Dto\AddNewStudentRequest;
-use App\Entity\Student;
-use App\Repository\StudentRepositoryInterface;
-use App\Service\Interfaces\StudentManagementInterface;
+use App\Repository\SemesterRepositoryInterface;
+use App\Repository\StudentRepository;
 use App\Service\Interfaces\StudentQueryInterface;
-use App\Service\Interfaces\UserQueryInterface;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
 
-class StudentQueryService implements StudentQueryInterface
+readonly class StudentQueryService implements StudentQueryInterface
 {
 
-    public function __construct(private StudentRepositoryInterface $studentRepository)
+    public function __construct(private StudentRepository $studentRepository, private readonly SemesterRepositoryInterface $semesterRepository)
     {
     }
 
 
-    public function getTotalStudentsCount(): int {
+    public function getTotalStudentsCount(): int
+    {
         return $this->studentRepository->count([]);
     }
-    public function getTotalStudentsCountOfUser($userId): int {
+
+    public function getTotalStudentsCountOfUser($userId): int
+    {
 //        dd('here in the get total students count of user');
         return $this->studentRepository->countStudentsOfUser($userId);
     }
-    public function findAllByLimitAndPage( $limit, $page): array
+
+    public function findAllByLimitAndPage($limit, $page): array
     {
-        $students = $this->studentRepository->findAllByLimitAndPage( $limit, $page);
+        $students = $this->studentRepository->findAllByLimitAndPage($limit, $page);
         $studentsArray = [];
         foreach ($students as $student) {
             $studentsArray[] = [
@@ -38,7 +37,7 @@ class StudentQueryService implements StudentQueryInterface
                 'number' => $student->getNumber(),
             ];
         }
-        $totalStudents = count($studentsArray);
+        $totalStudents = $this->getTotalStudentsCount();
         return [
             'students' => $studentsArray,
             'total' => $totalStudents,
@@ -47,6 +46,7 @@ class StudentQueryService implements StudentQueryInterface
         ];
 //        return $studentsArray;
     }
+
     public function findByUser($userId, $limit, $page): array
     {
         $students = $this->studentRepository->findByUser($userId, $limit, $page);
@@ -61,6 +61,7 @@ class StudentQueryService implements StudentQueryInterface
         }
         return $studentsArray;
     }
+
     public function findByStudentId($studentId): array
     {
         $student = $this->studentRepository->findById($studentId);
@@ -71,12 +72,37 @@ class StudentQueryService implements StudentQueryInterface
             'number' => $student->getNumber(),
             'photo' => $student->getPhoto(),
             'gender' => $student->getGender(),
-            ];
+        ];
 
     }
 
-    public function findSubjectById(int $id)
+
+    public function findBySemesterName(?string $name, ?int $semester, $limit, $page): array
     {
-        // TODO: Implement findSubjectById() method.
+        if ($semester !== null && $semester !== 0) {
+            $semesterId = $this->semesterRepository->findById($semester);
+            if ($semesterId == null) {
+                throw new \Exception('Semester not found');
+            }
+        } else {
+            $semesterId = null;
+        }
+        $students = $this->studentRepository->findBySemesterOrName($name, $semesterId, $limit, $page);
+        $studentsArray = [];
+        foreach ($students as $student) {
+            $studentsArray[] = [
+                'id' => $student->getId(),
+                'name' => $student->getName(),
+                'email' => $student->getEmail(),
+                'number' => $student->getNumber(),
+            ];
+        }
+        $totalStudents = $this->studentRepository->countFindBySemesterOrName($name, $semesterId);
+        return [
+            'students' => $studentsArray,
+            'total' => $totalStudents,
+            'page' => $page,
+            'limit' => $limit
+        ];
     }
 }

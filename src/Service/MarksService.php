@@ -6,12 +6,13 @@ use App\Dto\AddNewMark;
 use App\Entity\Marks;
 use App\Repository\ExamRepository;
 use App\Repository\MarksRepository;
+use App\Repository\MarksRepositoryInterface;
 use App\Repository\StudentRepository;
 
 class MarksService
 {
 
-    public function __construct(private StudentRepository $studentRepository, private ExamRepository $examRepository, private MarksRepository $marksRepository)
+    public function __construct(private StudentRepository $studentRepository, private ExamRepository $examRepository, private MarksRepositoryInterface $marksRepository)
     {
     }
 

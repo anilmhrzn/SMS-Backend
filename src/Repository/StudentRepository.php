@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Semester;
 use App\Entity\Student;
 use App\Entity\Subject;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -75,7 +76,7 @@ class StudentRepository extends ServiceEntityRepository implements StudentReposi
 //        ->getQuery()
 //        ->getResult();
 //}
-    public function addSubjectTostudent($studentId,$subjectId)
+    public function addSubjectTostudent($studentId, $subjectId)
     {
         $student = $this->findById($studentId);
         $subject = $this->getEntityManager()->getRepository(Subject::class)->find($subjectId);
@@ -84,7 +85,7 @@ class StudentRepository extends ServiceEntityRepository implements StudentReposi
         $this->getEntityManager()->flush();
     }
 
-    public function findAllByLimitAndPage($limit , $page): Paginator
+    public function findAllByLimitAndPage($limit, $page): Paginator
     {
 //        dd($limit,$page);
         $queryBuilder = $this->createQueryBuilder('s')
@@ -98,6 +99,7 @@ class StudentRepository extends ServiceEntityRepository implements StudentReposi
 //        dd($paginator);
         return $paginator;
     }
+
     public function countStudentsOfUser(int $userId): int
     {
         $qb = $this->createQueryBuilder('s')
@@ -106,6 +108,43 @@ class StudentRepository extends ServiceEntityRepository implements StudentReposi
             ->where('u.id = :userId')
             ->setParameter('userId', $userId);
 
+        return (int)$qb->getQuery()->getSingleScalarResult();
+    }
+
+    public function findBySemesterOrName(?string $name, ?Semester $semester, $limit, $page): Paginator
+    {
+        $qb = $this->createQueryBuilder('s');
+        if ($name !== null && $name !== '') {
+            $qb->andWhere('LOWER(s.name) LIKE LOWER(:name)')
+                ->setParameter('name', '%' . $name . '%');
+        }
+        if ($semester !== null) {
+            $qb->andWhere('s.semester = :semester')
+                ->setParameter('semester', $semester);
+        }
+        $qb->getQuery();
+        $qb->orderBy('s.id', 'ASC');
+//        dd($qb->getQuery()->getResult());
+        $paginator = new Paginator($qb);
+        $paginator->getQuery()
+            ->setFirstResult($limit * ($page - 1)) // Offset
+            ->setMaxResults($limit);
+        return $paginator;
+    }
+
+    public function countFindBySemesterOrName(?string $name, ?Semester $semester):int
+    {
+        $qb = $this->createQueryBuilder('s');
+        $qb->select('count(s.id)');
+        if ($name !== null && $name !== '') {
+            $qb->andWhere('LOWER(s.name) LIKE LOWER(:name)')
+                ->setParameter('name', '%' . $name . '%');
+        }
+        if ($semester !== null) {
+            $qb->andWhere('s.semester = :semester')
+                ->setParameter('semester', $semester);
+        }
+//        dd($qb->getQuery());
         return (int) $qb->getQuery()->getSingleScalarResult();
     }
 }
