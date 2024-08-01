@@ -21,9 +21,9 @@ class UserInfoValidatorService implements UserInfoValidatorInterface
         if (count($errors) > 0) {
             $errorMessages = [];
             foreach ($errors as $error) {
-                $errorMessages[$error->getPropertyPath()] = $error->getMessage();
+                $errorMessages = $error->getMessage();
             }
-            return ['errors' => $errorMessages];
+            return [$errorMessages];
         }
         return [];
     }

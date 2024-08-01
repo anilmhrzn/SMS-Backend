@@ -44,7 +44,6 @@ class JwtTokenGenerator implements TokenGeneratorInterface
             'iat' => time(),
             'nbf' => time(),
             'exp' => time() + 3600,
-//            $userData
             'email' => $userData['email'],
             'id' => $userData['id'],
             'roles' => $userData['roles'],

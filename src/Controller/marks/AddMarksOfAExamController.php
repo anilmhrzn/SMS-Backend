@@ -34,7 +34,7 @@ class AddMarksOfAExamController extends AbstractController
             $ignoredRecords = $this->csvService->validateAndParseCSV($dto, ['StudentID', 'Marks']);
 
         } catch (\Exception $e) {
-            return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+            return $this->json([ 'message' => 'Marks added successfully'.$e->getMessage(),'error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
         return $this->json([
             'message' => 'Marks added successfully',

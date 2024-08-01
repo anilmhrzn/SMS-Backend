@@ -21,7 +21,6 @@ readonly class StudentQueryService implements StudentQueryInterface
 
     public function getTotalStudentsCountOfUser($userId): int
     {
-//        dd('here in the get total students count of user');
         return $this->studentRepository->countStudentsOfUser($userId);
     }
 
@@ -44,14 +43,13 @@ readonly class StudentQueryService implements StudentQueryInterface
             'page' => $page,
             'limit' => $limit
         ];
-//        return $studentsArray;
     }
 
-    public function findByUser($userId, $limit, $page): array
+    public function findByUser($userId, $limit, $page, ?string $name = null, ?int $semesterId = null): array
     {
-        $students = $this->studentRepository->findByUser($userId, $limit, $page);
+        $paginator = $this->studentRepository->findByUserWithFilters($userId, $name, $semesterId, $limit, $page);
         $studentsArray = [];
-        foreach ($students as $student) {
+        foreach ($paginator as $student) {
             $studentsArray[] = [
                 'id' => $student->getId(),
                 'name' => $student->getName(),
@@ -59,7 +57,12 @@ readonly class StudentQueryService implements StudentQueryInterface
                 'number' => $student->getNumber(),
             ];
         }
-        return $studentsArray;
+        return [
+            'students' => $studentsArray,
+            'total' => count($paginator),
+            'page' => $page,
+            'limit' => $limit
+        ];
     }
 
     public function findByStudentId($studentId): array

@@ -132,7 +132,7 @@ class StudentRepository extends ServiceEntityRepository implements StudentReposi
         return $paginator;
     }
 
-    public function countFindBySemesterOrName(?string $name, ?Semester $semester):int
+    public function countFindBySemesterOrName(?string $name, ?Semester $semester): int
     {
         $qb = $this->createQueryBuilder('s');
         $qb->select('count(s.id)');
@@ -145,6 +145,31 @@ class StudentRepository extends ServiceEntityRepository implements StudentReposi
                 ->setParameter('semester', $semester);
         }
 //        dd($qb->getQuery());
-        return (int) $qb->getQuery()->getSingleScalarResult();
+        return (int)$qb->getQuery()->getSingleScalarResult();
+    }
+
+    public function findByUserWithFilters(int $userId, ?string $name, ?int $semesterId, int $limit, int $page): Paginator
+    {
+        $offset = ($page - 1) * $limit;
+        $qb = $this->createQueryBuilder('s')
+            ->leftJoin('s.users', 'u')
+            ->addSelect('u')
+            ->where('u.id = :userId')
+            ->setParameter('userId', $userId);
+
+        if ($name !== null && $name !== '') {
+            $qb->andWhere('LOWER(s.name) LIKE LOWER(:name)')
+                ->setParameter('name', '%' . $name . '%');
+        }
+
+        if ($semesterId !== null) {
+            $qb->andWhere('s.semester = :semesterId')
+                ->setParameter('semesterId', $semesterId);
+        }
+
+        $qb->setFirstResult($offset)
+            ->setMaxResults($limit);
+//        dd($qb->getQuery());
+        return new Paginator($qb);
     }
 }

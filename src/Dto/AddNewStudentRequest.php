@@ -34,6 +34,9 @@ readonly class AddNewStudentRequest
     )]
     private ?array $number;
 
+    #[Assert\NotNull(message: 'Null given to the semester Id.You must specify the semester')]
+    private ?int $semester_id;
+
     function __construct(array $requestData)
     {
 
@@ -42,6 +45,7 @@ readonly class AddNewStudentRequest
         $this->photo = $requestData['photo'] ?? null;
         $this->number = $requestData['number'] ?? null;
         $this->gender = $requestData['gender'] ?? null;
+        $this->semester_id = $requestData['semester_id'] ?? null;
     }
 
     public function getName(): ?string
@@ -68,5 +72,10 @@ readonly class AddNewStudentRequest
     public function getNumber(): ?array
     {
         return $this->number;
+    }
+
+    public function getSemesterId(): ?int
+    {
+        return $this->semester_id;
     }
 }

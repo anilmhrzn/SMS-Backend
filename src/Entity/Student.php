@@ -125,13 +125,14 @@ class Student
 
         return $this;
     }
-    public function setFromDto(AddNewStudentRequest $dto): void
+    public function setFromDto(AddNewStudentRequest $dto,$semesterId): void
     {
         $this->setName($dto->getName());
         $this->setEmail($dto->getEmail());
         $this->setGender($dto->getGender());
         $this->setNumber($dto->getNumber());
         $this->setPhoto($dto->getPhoto());
+        $this->setSemester($semesterId);
 
     }
 

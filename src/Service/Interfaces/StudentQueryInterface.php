@@ -12,6 +12,8 @@ interface StudentQueryInterface {
 
     public function findAllByLimitAndPage($limit, $page): array;
     public function findBySemesterName(?string $name,?int $semester,$limit, $page): array;
-    public function findByUser($userId, $limit, $page): array;
+//    public function findByUser($userId, $limit, $page): array;
+    public function findByUser($userId, $limit, $page, ?string $name = null, ?int $semesterId = null): array;
+
 
 }

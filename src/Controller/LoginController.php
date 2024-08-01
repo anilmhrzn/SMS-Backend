@@ -27,7 +27,6 @@ class LoginController extends AbstractController
         $token = $jwtTokenGenerator->generateToken($user);
         $response = new JsonResponse(["message" => "login successful"], Response::HTTP_OK, ['content-type' => 'application/json']);
         $response->headers->set('Authorization', 'Bearer ' . $token);
-        $response->headers->set('Access-Control-Expose-Headers', 'Authorization');
         return $response;
     }
 }
