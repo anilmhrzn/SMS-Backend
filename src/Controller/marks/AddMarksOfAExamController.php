@@ -5,6 +5,7 @@ namespace App\Controller\marks;
 use App\Dto\MarksUploadDTO;
 use App\Service\Interfaces\CSVInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -18,7 +19,7 @@ class AddMarksOfAExamController extends AbstractController
     }
 
     #[Route('/api/add/marks/of-exam', name: 'app_add_marks_of_a_exam', methods: ['POST'])]
-    public function index(Request $request): Response
+    public function index(Request $request): JsonResponse
     {
         $dto = new MarksUploadDTO($request->request->all() ?: [], $request->files->get('csv_file'));
         $errors = $this->validator->validate($dto);
@@ -36,7 +37,7 @@ class AddMarksOfAExamController extends AbstractController
         } catch (\Exception $e) {
             return $this->json([ 'message' => 'Marks added successfully'.$e->getMessage(),'error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
-        return $this->json([
+        return new JsonResponse([
             'message' => 'Marks added successfully',
             'error' => $ignoredRecords
         ], Response::HTTP_OK);

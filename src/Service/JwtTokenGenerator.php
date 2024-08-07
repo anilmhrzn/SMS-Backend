@@ -88,8 +88,6 @@ class JwtTokenGenerator implements TokenGeneratorInterface
         $headerCheckerManager = new HeaderCheckerManager(
             [
                 new AlgorithmChecker(['HS256']),
-                // We want to verify that the header "alg" (algorithm)
-                // is present and contains "HS256"
             ],
             [
                 new JWSTokenSupport(), // Adds JWS token type support
@@ -108,7 +106,7 @@ class JwtTokenGenerator implements TokenGeneratorInterface
 
 //        dd($payload,$payload[0]['email']);
         if ($payload['exp'] < time()) {
-            throw new CustomUserMessageAuthenticationException('Token has expired');
+            throw new CustomUserMessageAuthenticationException('Token has expired ! please Login.');
         }
 
         if (!isset($payload['email'])) {

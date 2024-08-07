@@ -16,14 +16,10 @@ class ViewAllSemesterController extends AbstractController
     {
     }
 
-//    #[Route('/api/view-all-semester')]
     #[Route('api/view-all-semester')]
     public function index(): JsonResponse
     {
         $semester = $this->semesterQuery->getAllSemester();
-
-
         return new JsonResponse($semester, Response::HTTP_OK);
-//        return $this->render('view_all_semester/index.html.twig');
     }
 }
