@@ -12,5 +12,7 @@ interface UserRepositoryInterface
     public function findAll(): array;
     public function addStudentToUser(int $id,Student $student):User;
     public function findSubjectByUser(int $id):Subject;
+    public function findByRole(): array;
+
 
 }

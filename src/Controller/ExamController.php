@@ -29,7 +29,7 @@ class ExamController extends AbstractController
     public function addExam(Request $request, ValidatorInterface $validator)
     {
         $data = json_decode($request->getContent(), true);
-        $examRequest = new AddExamRequest(new DateTime($data['date']), $data['name'], $data['subject']);
+        $examRequest = new AddExamRequest(new DateTime($data['date']), $data['name'], $data['semester']);
         $errors = $validator->validate($examRequest);
         if (count($errors) > 0) {
             $data = [];
@@ -38,24 +38,11 @@ class ExamController extends AbstractController
             }
             return new JsonResponse(["errors" => $data], Response::HTTP_BAD_REQUEST, ['content-type' => 'application/json']);
         }
+//        TODO: do this
+//        dd($examRequest);
         $exam = $this->examService->createExam($examRequest);
 
+
         return new JsonResponse($exam, Response::HTTP_CREATED);
-
     }
-
-
-//    #[Route('/api/search_exam', name: 'search_exam', methods: ['GET'])]
-//    public function searchExam(Request $request): JsonResponse
-//    {
-//        $id = $request->query->get('id');
-//        $name = $request->query->get('name');
-//        $date = $request->query->get('date');
-//        $subject = (int)$request->query->get('subject');
-////        dd($name,$date, $subject);
-//        $id = $id !== null ? (int)$id : null;
-//
-//        $exams = $this->examService->searchExam($id, $name, $date, $subject);
-//        return new JsonResponse($exams, Response::HTTP_OK, ['content-type' => 'application/json']);
-//    }
 }

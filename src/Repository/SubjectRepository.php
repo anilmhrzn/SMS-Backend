@@ -51,4 +51,14 @@ class SubjectRepository extends ServiceEntityRepository implements SubjectReposi
         $em->persist($subject);
         $em->flush();
     }
+    public function findBySemester(int $semesterId): array
+    {
+        return $this->createQueryBuilder('s')
+            ->select(' s.id,s.name')
+            ->innerJoin('s.semester', 'sem')
+            ->andWhere('sem.id = :semesterId')
+            ->setParameter('semesterId', $semesterId)
+            ->getQuery()
+            ->getResult();
+    }
 }

@@ -3,7 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Exam;
-use App\Entity\Subject;
+use App\Entity\Semester;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
@@ -51,7 +51,7 @@ class ExamRepository extends ServiceEntityRepository implements ExamRepositoryIn
         $em->flush();
     }
 
-    public function findByIdAndOrNameOrDateOrSub(?int $id, ?string $name, ?string $date, ?Subject $subject, $limit, $page): Paginator
+    public function findByIdAndOrNameOrDateOrSub(?int $id, ?string $name, ?string $date, ?Semester $semester, $limit, $page): Paginator
     {
         $qb = $this->createQueryBuilder('e');
 
@@ -72,9 +72,9 @@ class ExamRepository extends ServiceEntityRepository implements ExamRepositoryIn
             $qb->andWhere('e.date = :date')
                 ->setParameter('date', $date);
         }
-        if ($subject !== null) {
-            $qb->andWhere('e.subject = :subject')
-                ->setParameter('subject', $subject);
+        if ($semester !== null) {
+            $qb->andWhere('e.semester = :semester')
+                ->setParameter('semester', $semester);
         }
         $qb->getQuery();
         $paginator = new Paginator($qb);
@@ -117,7 +117,7 @@ class ExamRepository extends ServiceEntityRepository implements ExamRepositoryIn
     public function findStudentIsAllowedToGiveExam($studentId, $examId)
     {
         $qb = $this->createQueryBuilder('e')
-            ->innerJoin('e.subject', 's')
+            ->innerJoin('e.semester', 's')
             ->innerJoin('s.students', 'st')
             ->where('e.id = :examId')
             ->andWhere('st.id = :studentId')

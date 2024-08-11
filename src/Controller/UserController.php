@@ -11,7 +11,7 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('api')]
 class UserController extends AbstractController
 {
-    public function __construct(private UserService $userService)
+    public function __construct(private readonly UserService $userService)
     {
 
     }

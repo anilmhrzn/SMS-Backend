@@ -24,4 +24,5 @@ class SemesterRepository extends ServiceEntityRepository implements SemesterRepo
             ->getQuery()
             ->getOneOrNullResult();
     }
+
 }

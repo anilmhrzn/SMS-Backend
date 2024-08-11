@@ -16,7 +16,7 @@ readonly class AddExamRequest
         private string $name,
 
         #[Assert\NotBlank(message: 'Subject should not be blank')]
-        private int $subject
+        private int $semester
     )
     {
         $this->date = $date;
@@ -28,9 +28,9 @@ readonly class AddExamRequest
 
     }
 
-    public function getSubject(): int
+    public function getSemester(): int
     {
-        return $this->subject;
+        return $this->semester;
     }
     public function getName(): string
     {

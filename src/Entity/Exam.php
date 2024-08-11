@@ -98,10 +98,10 @@ class Exam
 
         return $this;
     }
-    public function setFromDto(AddExamRequest $dto,$sub): void
+    public function setFromDto(AddExamRequest $dto,$semester): void
     {
         $this->setName($dto->getName());
-        $this->setSubject($sub);
+        $this->setSemester($semester);
         $this->setDate($dto->getDate());
     }
 

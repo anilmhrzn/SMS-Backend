@@ -21,8 +21,9 @@ class SearchExamController extends AbstractController
         $date = $request->query->get('date');
         $page = (int)$request->query->get('page', 1);
         $limit = (int)$request->query->get('limit', 10);
-        $subject = (int)$request->query->get('subject');
-        $exams = $this->examQueryService->searchExam($id, $name, $date, $subject,$limit,$page);
+//        $subject = (int)$request->query->get('subject');
+        $semester = (int)$request->query->get('semester');
+        $exams = $this->examQueryService->searchExam($id, $name, $date,$semester,$limit,$page);
         return new JsonResponse($exams, Response::HTTP_OK, ['content-type' => 'application/json']);
     }
 }

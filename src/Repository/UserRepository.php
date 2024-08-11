@@ -6,6 +6,7 @@ use App\Entity\Student;
 use App\Entity\Subject;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -39,6 +40,55 @@ class UserRepository extends ServiceEntityRepository implements UserRepositoryIn
 
         return $user->getSubject();
     }
+
+    public function findByRole(): array
+    {
+        $role = 'ROLE_USER';
+        return $this->createQueryBuilder('u')
+            ->innerJoin('u.semester', 's')
+            ->andWhere('u.roles LIKE :role')
+            ->setParameter('role', '%"' . $role . '"%')
+            ->getQuery()
+            ->getResult();
+    }
+
+//    public function findByRoleAndSemester(?int $semesterNumber): array
+//    {
+//
+//        $role = 'ROLE_USER';
+//        $qb = $this->createQueryBuilder('u')
+//
+//            ->innerJoin('u.semester', 's')
+//            ->andWhere('u.roles LIKE :role')
+//            ->setParameter('role', '%"' . $role . '"%');
+//        if ($semesterNumber != null) {
+//            $qb->andWhere('s.semester = :semesterNumber')
+//                ->setParameter('semesterNumber', $semesterNumber);
+//        }
+//        $qb->leftJoin('u.subject', 'sub');
+//        return $qb->select('u.id,u.name, u.email,u.roles,s.semester,sub.name as subject')
+//            ->getQuery()
+//            ->getResult();
+//    }
+
+ public function findByRoleAndSemester(?int $semesterNumber, int $page = 1, int $limit = 10): Paginator
+{
+    $role = 'ROLE_USER';
+    $qb = $this->createQueryBuilder('u')
+        ->select('u, s.semester, sub.name as subject')
+        ->innerJoin('u.semester', 's')
+        ->leftJoin('u.subject', 'sub')
+        ->andWhere('u.roles LIKE :role')
+        ->setParameter('role', '%"' . $role . '"%');
+    if ($semesterNumber != null) {
+        $qb->andWhere('s.semester = :semesterNumber')
+            ->setParameter('semesterNumber', $semesterNumber);
+    }
+    $qb->setFirstResult(($page - 1) * $limit)
+        ->setMaxResults($limit);
+//    dd($qb->getQuery()->getResult());
+    return new Paginator($qb);
+}
 }
 
 

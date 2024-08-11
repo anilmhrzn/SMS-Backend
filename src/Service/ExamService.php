@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Dto\AddExamRequest;
 use App\Entity\Exam;
 use App\Repository\ExamRepositoryInterface;
+use App\Repository\SemesterRepositoryInterface;
 use App\Repository\SubjectRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Validator\Constraints\Date;
@@ -12,18 +13,22 @@ use Symfony\Component\Validator\Constraints\DateTime;
 
 class ExamService
 {
-    public function __construct(private ExamRepositoryInterface $examRepository, private EntityManagerInterface $entityManager, private SubjectRepository $subRepo)
+    public function __construct(private ExamRepositoryInterface $examRepository, private EntityManagerInterface $entityManager, private SemesterRepositoryInterface $semesterRepository)
     {
     }
 
     public function createExam(AddExamRequest $data): array
     {
+
         $exam = new Exam();
-        $subId = $this->subRepo->findById($data->getSubject());
-        if ($subId == null) {
-            throw new \Exception('Subject not found');
+        $semester = $this->semesterRepository->findById($data->getSemester());
+//        $subId = $this->subRepo->findById($data->getSubject());
+        if ($semester == null) {
+            throw new \Exception('Semester not found');
         }
-        $exam->setFromDto($data, $subId);
+//        dd($semester);
+
+        $exam->setFromDto($data, $semester);
         $this->entityManager->beginTransaction();
         try {
             $this->examRepository->addNewExam($exam);
@@ -36,8 +41,8 @@ class ExamService
             'id' => $exam->getId(),
             'name' => $exam->getName(),
             'date' => $exam->getDate()->format('Y-m-d'),
-            'subject' => $exam->getSubject()->getName(),
-//            'time' => $exam->getTime(),
+//            'subject' => $exam->getSubject()->getName(),
+//             'time' => $exam->getTime(),
 //            'duration' => $exam->getDuration(),
 //            'total_marks' => $exam->getTotalMarks(),
         ];
