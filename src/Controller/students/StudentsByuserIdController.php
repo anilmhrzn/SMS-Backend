@@ -22,7 +22,6 @@ class StudentsByuserIdController extends AbstractController
         $name = $request->query->get('name');
         $semesterId = $request->query->get('semester_id');
         $id= $request->query->get('user_id');
-//        dd($semesterId);
         $students = $studentQueryService->findByUser($id, $limit, $page, $name, $semesterId);
         return $this->json($students);
     }

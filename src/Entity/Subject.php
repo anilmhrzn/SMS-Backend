@@ -33,11 +33,18 @@ class Subject
     #[ORM\ManyToOne(inversedBy: 'subject')]
     private ?Semester $semester = null;
 
+    /**
+     * @var Collection<int, Marks>
+     */
+    #[ORM\OneToMany(targetEntity: Marks::class, mappedBy: 'subject')]
+    private Collection $marks;
+
 
     public function __construct()
     {
         $this->exams = new ArrayCollection();
         $this->students = new ArrayCollection();
+        $this->marks = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -128,6 +135,36 @@ class Subject
     public function setSemester(?Semester $semester): static
     {
         $this->semester = $semester;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Marks>
+     */
+    public function getMarks(): Collection
+    {
+        return $this->marks;
+    }
+
+    public function addMark(Marks $mark): static
+    {
+        if (!$this->marks->contains($mark)) {
+            $this->marks->add($mark);
+            $mark->setSubject($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMark(Marks $mark): static
+    {
+        if ($this->marks->removeElement($mark)) {
+            // set the owning side to null (unless already changed)
+            if ($mark->getSubject() === $this) {
+                $mark->setSubject(null);
+            }
+        }
 
         return $this;
     }

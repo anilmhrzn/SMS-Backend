@@ -84,9 +84,12 @@ class ExamRepository extends ServiceEntityRepository implements ExamRepositoryIn
         return $paginator;
     }
 
-    public function findLatestTakenExam(): ?Exam
+    public function findLatestTakenExam($semester): ?Exam
     {
         return $this->createQueryBuilder('e')
+            ->innerJoin('e.semester', 's') // Join with semester
+            ->where('s.semester=:semester')
+            ->setParameter('semester', $semester)
             ->orderBy('e.date', 'DESC') // Order by date in descending order
             ->setMaxResults(1) // Limit to only the most recent exam
             ->getQuery()
@@ -116,6 +119,7 @@ class ExamRepository extends ServiceEntityRepository implements ExamRepositoryIn
 
     public function findStudentIsAllowedToGiveExam($studentId, $examId)
     {
+        dd($studentId, $examId);
         $qb = $this->createQueryBuilder('e')
             ->innerJoin('e.semester', 's')
             ->innerJoin('s.students', 'st')

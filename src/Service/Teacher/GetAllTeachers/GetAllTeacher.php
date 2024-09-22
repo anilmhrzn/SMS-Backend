@@ -21,7 +21,6 @@ readonly class GetAllTeacher implements GetAllTeachersInterface
         $limit=10;
     }
     $paginator = $this->userRepository->findByRoleAndSemester($semester, $page, $limit);
-//    dd($paginator);
     $totalItems = count($paginator);
     $totalPages = ceil($totalItems / $limit);
     $results = [];

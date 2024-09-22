@@ -113,7 +113,9 @@ class StudentRepository extends ServiceEntityRepository implements StudentReposi
 
     public function findBySemesterOrName(?string $name, ?Semester $semester, $limit, $page): Paginator
     {
-        $qb = $this->createQueryBuilder('s');
+        $qb = $this->createQueryBuilder('s')
+            ->where('s.is_deleted = false');
+
         if ($name !== null && $name !== '') {
             $qb->andWhere('LOWER(s.name) LIKE LOWER(:name)')
                 ->setParameter('name', '%' . $name . '%');
@@ -155,6 +157,7 @@ class StudentRepository extends ServiceEntityRepository implements StudentReposi
             ->leftJoin('s.users', 'u')
             ->addSelect('u')
             ->where('u.id = :userId')
+            ->andWhere('s.is_deleted = false')
             ->setParameter('userId', $userId);
 
         if ($name !== null && $name !== '') {
@@ -171,5 +174,23 @@ class StudentRepository extends ServiceEntityRepository implements StudentReposi
             ->setMaxResults($limit);
 //        dd($qb->getQuery());
         return new Paginator($qb);
+    }
+
+    public function findStudentIsAllowedToGiveExam(mixed $studentId, $semesterId)
+    {
+        $student = $this->find($studentId);
+
+        // If student is not found, return false
+        if (!$student) {
+            return false;
+        }
+
+        // Compare the student's semester with the provided semesterId
+        if ($student->getSemester() && $student->getSemester()->getId() === $semesterId) {
+            return true;
+        }
+
+        // If the semester does not match, return false
+        return false;
     }
 }

@@ -70,26 +70,38 @@ class MarksRepository extends ServiceEntityRepository implements MarksRepository
         // TODO: Implement viewMarks() method.
     }
 
-   public function findMarksByExamId(int $examId)
-{
-    $qb = $this->createQueryBuilder('m')
-        ->select('m.mark_obtained', 's.id AS student_Id', 's.name AS student_name')
-        ->join('m.student', 's')
-        ->where('m.exam = :examId')
-        ->setParameter('examId', $examId)
-        ->getQuery();
+    public function findMarksByExamId(int $examId,int $subjectId)
+    {
+        $qb = $this->createQueryBuilder('m')
+            ->leftJoin('m.subject', 'sub')
 
-    return $qb->getResult();
-}
-function countFailedStudentsByExamId(int $examId): int
-{
-    $qb = $this->createQueryBuilder('m')
-        ->select('COUNT(m.id)')
-        ->where('m.exam = :examId')
-        ->andWhere('m.mark_obtained < 40')
-        ->setParameter('examId', $examId)
-        ->getQuery();
+            ->select('m.mark_obtained', 's.id AS student_Id', 's.name AS student_name')
+            ->join('m.student', 's')
+            ->where('m.exam = :examId')
+            ->setParameter('examId', $examId)
+            ->andWhere('sub.id = :subId')
+            ->setParameter('subId', $subjectId)
+            ->getQuery();
 
-    return $qb->getSingleScalarResult();
-}
+        return $qb->getResult();
+    }
+
+    function countFailedStudentsByExamId(int $examId): int
+    {
+        $qb = $this->createQueryBuilder('m')
+            ->select('COUNT(m.id)')
+            ->where('m.exam = :examId')
+            ->andWhere('m.mark_obtained < 40')
+            ->setParameter('examId', $examId)
+            ->getQuery();
+
+        return $qb->getSingleScalarResult();
+    }
+
+    public function findBySubjectAndExam($subject, $exam, $student): ?Marks
+    {
+        $result = $this->findOneBy(['subject' => $subject, 'exam' => $exam, 'student' => $student]);
+        return $result ?: null;
+
+    }
 }

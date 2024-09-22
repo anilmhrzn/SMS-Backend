@@ -18,11 +18,6 @@ class Marks
     #[ORM\Column(length: 255)]
     private ?string $mark_obtained = null;
 
-    /**
-     * @var Collection<int, Subject>
-     */
-    #[ORM\OneToMany(targetEntity: Subject::class, mappedBy: 'marks')]
-    private Collection $subject;
 
     #[ORM\ManyToOne(inversedBy: 'marks')]
     private ?Student $student = null;
@@ -30,9 +25,11 @@ class Marks
     #[ORM\ManyToOne(inversedBy: 'marks')]
     private ?Exam $exam = null;
 
+    #[ORM\ManyToOne(inversedBy: 'marks')]
+    private ?Subject $subject = null;
+
     public function __construct()
     {
-        $this->subject = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -52,35 +49,6 @@ class Marks
         return $this;
     }
 
-    /**
-     * @return Collection<int, Subject>
-     */
-    public function getSubject(): Collection
-    {
-        return $this->subject;
-    }
-
-    public function addSubject(Subject $subject): static
-    {
-        if (!$this->subject->contains($subject)) {
-            $this->subject->add($subject);
-            $subject->setMarks($this);
-        }
-
-        return $this;
-    }
-
-    public function removeSubject(Subject $subject): static
-    {
-        if ($this->subject->removeElement($subject)) {
-            // set the owning side to null (unless already changed)
-            if ($subject->getMarks() === $this) {
-                $subject->setMarks(null);
-            }
-        }
-
-        return $this;
-    }
 
     public function getStudent(): ?Student
     {
@@ -102,6 +70,18 @@ class Marks
     public function setExam(?Exam $exam): static
     {
         $this->exam = $exam;
+
+        return $this;
+    }
+
+    public function getSubject(): ?Subject
+    {
+        return $this->subject;
+    }
+
+    public function setSubject(?Subject $subject): static
+    {
+        $this->subject = $subject;
 
         return $this;
     }

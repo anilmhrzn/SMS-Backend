@@ -22,12 +22,16 @@ class ViewMarksByExamIdController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
         $examId = $data['exam_id'] ?? null;
+        $subId = $data['subject_id'] ?? null;
 
         if (!is_numeric($examId)) {
             return new JsonResponse(['error' => 'Invalid exam ID'], Response::HTTP_BAD_REQUEST);
         }
+        if (!is_numeric($subId)) {
+            return new JsonResponse(['error' => 'Invalid subject ID'], Response::HTTP_BAD_REQUEST);
+        }
 
-        $marks = $marksRepository->findMarksByExamId((int)$examId);
+        $marks = $marksRepository->findMarksByExamId((int)$examId, (int)$subId);
 //        dd($marks);
         $json = $this->serializer->serialize($marks, 'json', [
             AbstractNormalizer::ATTRIBUTES => [ 'student' => ['id' => 'student_Id', 'name' => 'student_name'],'mark_obtained'],

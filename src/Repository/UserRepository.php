@@ -86,9 +86,23 @@ class UserRepository extends ServiceEntityRepository implements UserRepositoryIn
     }
     $qb->setFirstResult(($page - 1) * $limit)
         ->setMaxResults($limit);
-//    dd($qb->getQuery()->getResult());
     return new Paginator($qb);
 }
+    public function countByRoleAndSemester(?int $semesterNumber): int
+    {
+        $role = 'ROLE_USER';
+        $qb = $this->createQueryBuilder('u')
+            ->select('COUNT(u.id)')
+            ->innerJoin('u.semester', 's')
+            ->leftJoin('u.subject', 'sub')
+            ->andWhere('u.roles LIKE :role')
+            ->setParameter('role', '%"' . $role . '"%');
+        if ($semesterNumber != null) {
+            $qb->andWhere('s.semester = :semesterNumber')
+                ->setParameter('semesterNumber', $semesterNumber);
+        }
+        return (int) $qb->getQuery()->getSingleScalarResult();
+    }
 }
 
 

@@ -29,7 +29,9 @@ class AddMarksOfAExamController extends AbstractController
                 $message = str_replace('{{ value }}', $error->getInvalidValue(), $error->getMessageTemplate());
                 $errorMessages[] = $message;
             }
-            return $this->json(['errors' => $errorMessages]);
+            return $this->json([
+                'message' => 'Marks not added successfully',
+                'errors' => $errorMessages]);
         }
         try {
             $ignoredRecords = $this->csvService->validateAndParseCSV($dto, ['StudentID', 'Marks']);

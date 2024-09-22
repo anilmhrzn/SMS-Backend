@@ -54,6 +54,10 @@ class Student
     #[ORM\ManyToOne(inversedBy: 'student')]
     private ?Semester $semester = null;
 
+
+    #[ORM\Column]
+    private ?bool $is_deleted = null;
+
     public function __construct()
     {
         $this->subjects = new ArrayCollection();
@@ -234,6 +238,19 @@ class Student
     public function setSemester(?Semester $semester): static
     {
         $this->semester = $semester;
+
+        return $this;
+    }
+
+
+    public function isDeleted(): ?bool
+    {
+        return $this->is_deleted;
+    }
+
+    public function setDeleted(bool $is_deleted): static
+    {
+        $this->is_deleted = $is_deleted;
 
         return $this;
     }

@@ -21,4 +21,6 @@ interface StudentRepositoryInterface
     public function addSubjectTostudent($studentId, $subjectId);
     public function findByUserWithFilters(int $userId, ?string $name, ?int $semesterId, int $limit, int $page): Paginator;
 
+    public function findStudentIsAllowedToGiveExam(mixed $studentId, $semesterId);
+
 }
